@@ -1,288 +1,630 @@
 /* =========================================
-   أدواتي — Main Application
-   Search, categories, theme and navigation
+   ImagePro — Professional Image Compressor
+   Image processing runs locally in the browser
 ========================================= */
 
 "use strict";
 
-document.addEventListener("DOMContentLoaded", () => {
-  /* ---------- Elements ---------- */
+/* ---------- Select elements ---------- */
 
-  const searchForm = document.getElementById("searchForm");
-  const searchInput = document.getElementById("toolSearch");
+const $ = (selector) => document.querySelector(selector);
 
-  const categoryTabs = document.getElementById("categoryTabs");
-  const categoryButtons = document.querySelectorAll(".category-button");
+const imageInput = $("#imageInput");
+const uploadZone = $("#uploadZone");
+const selectImageBtn = $("#selectImageBtn");
+const workspace = $("#workspace");
 
-  const toolsGrid = document.getElementById("toolsGrid");
-  const toolCards = Array.from(document.querySelectorAll(".tool-card"));
+const removeImageBtn = $("#removeImageBtn");
+const outputFormat = $("#outputFormat");
+const qualityRange = $("#qualityRange");
+const qualityValue = $("#qualityValue");
 
-  const toolsCounter = document.getElementById("toolsCounter");
-  const emptyState = document.getElementById("emptyState");
-  const clearSearchButton = document.getElementById("clearSearch");
+const compressBtn = $("#compressBtn");
+const resetSettingsBtn = $("#resetSettingsBtn");
 
-  const themeToggle = document.getElementById("themeToggle");
-  const themeIcon = document.getElementById("themeIcon");
+const statusMessage = $("#statusMessage");
 
-  const mobileMenuButton = document.getElementById("mobileMenuButton");
+const originalPreview = $("#originalPreview");
+const compressedPreview = $("#compressedPreview");
 
-  const mainNav = document.getElementById("mainNav");
-  const navLinks = document.querySelectorAll(".nav-link");
+const fileName = $("#fileName");
+const originalSize = $("#originalSize");
+const imageDimensions = $("#imageDimensions");
 
-  const currentYear = document.getElementById("currentYear");
+const comparisonGrid = $("#comparisonGrid");
+const compressionResult = $("#compressionResult");
 
-  /* ---------- State ---------- */
+const originalSizeBadge = $("#originalSizeBadge");
+const compressedSizeBadge = $("#compressedSizeBadge");
 
-  let activeCategory = "all";
-  let searchQuery = "";
+const resultOriginalSize = $("#resultOriginalSize");
+const resultCompressedSize = $("#resultCompressedSize");
+const savedPercentage = $("#savedPercentage");
 
-  /* ---------- Search normalization ---------- */
+const downloadBtn = $("#downloadBtn");
+const resultNote = $("#resultNote");
 
-  function normalizeText(value) {
-    return String(value || "")
-      .toLocaleLowerCase("ar")
-      .normalize("NFKC")
-      .replace(/[أإآ]/g, "ا")
-      .replace(/ى/g, "ي")
-      .replace(/ة/g, "ه")
-      .replace(/\s+/g, " ")
-      .trim();
+const themeToggle = $("#themeToggle");
+const currentYear = $("#currentYear");
+
+/* ---------- Application state ---------- */
+
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
+
+let originalFile = null;
+let originalImageUrl = null;
+let compressedImageUrl = null;
+
+let imageWidth = 0;
+let imageHeight = 0;
+
+let compressionInProgress = false;
+let operationId = 0;
+
+/* ---------- General helpers ---------- */
+
+function formatBytes(bytes) {
+  if (!Number.isFinite(bytes) || bytes < 0) {
+    return "غير معروف";
   }
 
-  /* ---------- Category labels ---------- */
-
-  function getCategoryLabel(category) {
-    const labels = {
-      all: "جميع الأدوات",
-      images: "الصور",
-      documents: "الملفات والمستندات",
-      coming: "الأدوات القادمة",
-    };
-
-    return labels[category] || "الأدوات";
+  if (bytes === 0) {
+    return "0 بايت";
   }
 
-  /* ---------- Counter ---------- */
+  const units = ["بايت", "KB", "MB", "GB"];
+  const unitIndex = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1,
+  );
 
-  function updateCounter(count) {
-    if (count === 0) {
-      toolsCounter.textContent = "لا توجد أدوات مطابقة";
+  const value = bytes / Math.pow(1024, unitIndex);
+
+  return `${value.toLocaleString("ar-EG", {
+    maximumFractionDigits: unitIndex === 0 ? 0 : 2,
+  })} ${units[unitIndex]}`;
+}
+
+function showMessage(message, type = "success") {
+  statusMessage.textContent = message;
+
+  if (type === "error") {
+    statusMessage.style.color = "var(--danger)";
+  } else {
+    statusMessage.style.color = "var(--success)";
+  }
+}
+
+function clearMessage() {
+  statusMessage.textContent = "";
+}
+
+function revokeUrl(url) {
+  if (url) {
+    URL.revokeObjectURL(url);
+  }
+}
+
+function getExtension(mimeType) {
+  const extensions = {
+    "image/webp": "webp",
+    "image/jpeg": "jpg",
+    "image/png": "png",
+  };
+
+  return extensions[mimeType] || "png";
+}
+
+function getSafeFileName(name) {
+  const baseName = name.replace(/\.[^/.]+$/, "");
+  const safeName = baseName
+    .replace(/[<>:"/\\|?*\u0000-\u001F]/g, "-")
+    .trim()
+    .slice(0, 100);
+
+  return safeName || "image";
+}
+
+function setCompressionState(isRunning) {
+  compressionInProgress = isRunning;
+  compressBtn.disabled = isRunning;
+  selectImageBtn.disabled = isRunning;
+  removeImageBtn.disabled = isRunning;
+  outputFormat.disabled = isRunning;
+  qualityRange.disabled = isRunning;
+  resetSettingsBtn.disabled = isRunning;
+
+  compressBtn.innerHTML = isRunning
+    ? "جارٍ ضغط الصورة..."
+    : "ضغط الصورة الآن <span>→</span>";
+}
+
+/* ---------- Result management ---------- */
+
+function clearCompressedResult() {
+  revokeUrl(compressedImageUrl);
+  compressedImageUrl = null;
+
+  compressedPreview.removeAttribute("src");
+  downloadBtn.removeAttribute("href");
+
+  comparisonGrid.hidden = true;
+  compressionResult.hidden = true;
+  resultNote.textContent = "";
+
+  compressedSizeBadge.textContent = "—";
+  resultCompressedSize.textContent = "—";
+  savedPercentage.textContent = "—";
+}
+
+function resetWorkspace() {
+  operationId++;
+
+  setCompressionState(false);
+
+  originalFile = null;
+  imageWidth = 0;
+  imageHeight = 0;
+
+  revokeUrl(originalImageUrl);
+  originalImageUrl = null;
+
+  clearCompressedResult();
+
+  imageInput.value = "";
+
+  originalPreview.removeAttribute("src");
+
+  fileName.textContent = "—";
+  originalSize.textContent = "الحجم الأصلي: —";
+  imageDimensions.textContent = "الأبعاد: —";
+
+  originalSizeBadge.textContent = "—";
+
+  workspace.hidden = true;
+  uploadZone.hidden = false;
+
+  uploadZone.classList.remove("drag-over");
+
+  clearMessage();
+}
+
+/* ---------- Image loading ---------- */
+
+async function loadImageFile(file) {
+  if (compressionInProgress) {
+    showMessage(
+      "انتظر حتى تنتهي العملية الحالية قبل اختيار صورة أخرى.",
+      "error",
+    );
+    return;
+  }
+
+  if (!file) {
+    return;
+  }
+
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+  if (!allowedTypes.includes(file.type)) {
+    showMessage("يرجى اختيار صورة بصيغة JPG أو PNG أو WebP.", "error");
+    return;
+  }
+
+  if (file.size === 0) {
+    showMessage("الملف فارغ، اختر صورة أخرى.", "error");
+    return;
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    showMessage("حجم الصورة أكبر من 20 ميجابايت. اختر صورة أصغر.", "error");
+    return;
+  }
+
+  const currentOperation = ++operationId;
+
+  revokeUrl(originalImageUrl);
+  originalImageUrl = null;
+
+  clearCompressedResult();
+
+  clearMessage();
+
+  const newImageUrl = URL.createObjectURL(file);
+  originalImageUrl = newImageUrl;
+
+  try {
+    const image = new Image();
+
+    image.src = newImageUrl;
+
+    await image.decode();
+
+    if (currentOperation !== operationId) {
       return;
     }
 
-    if (count === 1) {
-      toolsCounter.textContent = "أداة واحدة";
-      return;
+    if (!image.naturalWidth || !image.naturalHeight) {
+      throw new Error("تعذر قراءة أبعاد الصورة.");
     }
 
-    if (count === 2) {
-      toolsCounter.textContent = "أداتان";
-      return;
+    originalFile = file;
+    imageWidth = image.naturalWidth;
+    imageHeight = image.naturalHeight;
+
+    fileName.textContent = file.name;
+    originalSize.textContent = `الحجم الأصلي: ${formatBytes(file.size)}`;
+
+    imageDimensions.textContent = `الأبعاد: ${imageWidth.toLocaleString("ar-EG")} × ${imageHeight.toLocaleString(
+      "ar-EG",
+    )} بكسل`;
+
+    originalSizeBadge.textContent = formatBytes(file.size);
+
+    originalPreview.src = originalImageUrl;
+
+    workspace.hidden = false;
+    uploadZone.hidden = true;
+
+    showMessage("تم تحميل الصورة بنجاح.");
+  } catch (error) {
+    if (currentOperation === operationId) {
+      revokeUrl(originalImageUrl);
+      originalImageUrl = null;
+
+      originalFile = null;
+
+      workspace.hidden = true;
+      uploadZone.hidden = false;
+
+      showMessage("تعذر فتح الصورة. جرّب ملفًا آخر صالحًا.", "error");
     }
+  }
+}
 
-    toolsCounter.textContent = `${count} أدوات`;
+/* ---------- File selection ---------- */
+
+selectImageBtn.addEventListener("click", (event) => {
+  event.stopPropagation();
+
+  if (!compressionInProgress) {
+    imageInput.click();
+  }
+});
+
+uploadZone.addEventListener("click", (event) => {
+  if (event.target === selectImageBtn || event.target.closest("button")) {
+    return;
   }
 
-  /* ---------- Filtering ---------- */
-
-  function filterTools() {
-    let visibleCount = 0;
-
-    toolCards.forEach((card) => {
-      const category = card.dataset.category || "";
-      const title = card.querySelector("h3")?.textContent || "";
-      const description =
-        card.querySelector(".tool-card-body p")?.textContent || "";
-      const keywords = card.dataset.search || "";
-      const cardText = normalizeText(
-        `${title} ${description} ${keywords} ${category}`,
-      );
-
-      const matchesCategory =
-        activeCategory === "all" || category === activeCategory;
-
-      const matchesSearch = !searchQuery || cardText.includes(searchQuery);
-
-      const visible = matchesCategory && matchesSearch;
-
-      card.hidden = !visible;
-
-      if (visible) {
-        visibleCount++;
-      }
-    });
-
-    updateCounter(visibleCount);
-
-    emptyState.hidden = visibleCount !== 0;
-    toolsGrid.hidden = visibleCount === 0;
+  if (!compressionInProgress) {
+    imageInput.click();
   }
+});
 
-  /* ---------- Search form ---------- */
-
-  searchInput.addEventListener("input", () => {
-    searchQuery = normalizeText(searchInput.value);
-    filterTools();
-  });
-
-  searchForm.addEventListener("submit", (event) => {
+uploadZone.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.key === " ") {
     event.preventDefault();
 
-    searchQuery = normalizeText(searchInput.value);
-    filterTools();
+    if (!compressionInProgress) {
+      imageInput.click();
+    }
+  }
+});
 
-    document.getElementById("tools").scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+imageInput.addEventListener("change", async () => {
+  const file = imageInput.files?.[0];
+
+  if (file) {
+    await loadImageFile(file);
+  }
+});
+
+/* ---------- Drag and drop ---------- */
+
+uploadZone.addEventListener("dragover", (event) => {
+  event.preventDefault();
+
+  if (!compressionInProgress) {
+    uploadZone.classList.add("drag-over");
+  }
+});
+
+uploadZone.addEventListener("dragleave", (event) => {
+  if (!uploadZone.contains(event.relatedTarget)) {
+    uploadZone.classList.remove("drag-over");
+  }
+});
+
+uploadZone.addEventListener("drop", async (event) => {
+  event.preventDefault();
+
+  uploadZone.classList.remove("drag-over");
+
+  if (compressionInProgress) {
+    return;
+  }
+
+  const file = event.dataTransfer?.files?.[0];
+
+  if (file) {
+    imageInput.value = "";
+    await loadImageFile(file);
+  }
+});
+
+/* ---------- Quality control ---------- */
+
+qualityRange.addEventListener("input", () => {
+  qualityValue.textContent = `${qualityRange.value}%`;
+
+  if (compressedImageUrl) {
+    clearCompressedResult();
+    showMessage("تغيّرت الإعدادات. اضغط الصورة مرة أخرى.");
+  }
+});
+
+outputFormat.addEventListener("change", () => {
+  if (compressedImageUrl) {
+    clearCompressedResult();
+    showMessage("تغيّرت الصيغة. اضغط الصورة مرة أخرى.");
+  }
+});
+
+/* ---------- Canvas image compression ---------- */
+
+function canvasToBlob(canvas, mimeType, quality) {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error("تعذر إنشاء الصورة المضغوطة."));
+          return;
+        }
+
+        resolve(blob);
+      },
+      mimeType,
+      quality,
+    );
   });
+}
 
-  /* ---------- Categories ---------- */
+async function compressImage() {
+  if (compressionInProgress) {
+    return;
+  }
 
-  categoryTabs.addEventListener("click", (event) => {
-    const button = event.target.closest(".category-button");
+  if (!originalFile || !originalImageUrl) {
+    showMessage("اختر صورة أولًا قبل الضغط.", "error");
+    return;
+  }
 
-    if (!button) {
+  const currentOperation = operationId;
+
+  clearCompressedResult();
+  clearMessage();
+
+  setCompressionState(true);
+
+  try {
+    const image = new Image();
+
+    image.src = originalImageUrl;
+
+    await image.decode();
+
+    if (currentOperation !== operationId) {
       return;
     }
 
-    activeCategory = button.dataset.category || "all";
-
-    categoryButtons.forEach((item) => {
-      const isActive = item === button;
-
-      item.classList.toggle("active", isActive);
-      item.setAttribute("aria-pressed", String(isActive));
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d", {
+      alpha: true,
     });
 
-    filterTools();
-  });
+    if (!context) {
+      throw new Error("المتصفح لا يدعم معالجة الصور المطلوبة.");
+    }
 
-  /* ---------- Reset search ---------- */
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
 
-  clearSearchButton.addEventListener("click", () => {
-    searchInput.value = "";
-    searchQuery = "";
-    activeCategory = "all";
+    const mimeType = outputFormat.value;
+    const quality = Number(qualityRange.value) / 100;
 
-    categoryButtons.forEach((button) => {
-      const isActive = button.dataset.category === "all";
+    /*
+      JPEG لا يدعم الشفافية.
+      نستخدم خلفية بيضاء عند التصدير إلى JPEG.
+    */
 
-      button.classList.toggle("active", isActive);
-      button.setAttribute("aria-pressed", String(isActive));
-    });
+    if (mimeType === "image/jpeg") {
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+    }
 
-    filterTools();
-    searchInput.focus();
-  });
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
 
-  /* ---------- Theme ---------- */
+    const blob = await canvasToBlob(canvas, mimeType, quality);
 
-  const THEME_KEY = "adawati-theme";
+    if (currentOperation !== operationId) {
+      return;
+    }
 
-  function updateThemeButton() {
-    const isDark = document.body.classList.contains("dark-mode");
+    /*
+      بعض المتصفحات قد لا تدعم الصيغة المطلوبة
+      وتعيد الصورة بصيغة PNG بدلًا منها.
+    */
 
-    themeIcon.textContent = isDark ? "☀" : "☾";
+    const actualMimeType = blob.type || "image/png";
 
-    themeToggle.setAttribute(
-      "aria-label",
-      isDark ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن",
+    compressedImageUrl = URL.createObjectURL(blob);
+
+    compressedPreview.src = compressedImageUrl;
+
+    const originalBytes = originalFile.size;
+    const compressedBytes = blob.size;
+
+    const difference = originalBytes - compressedBytes;
+    const percentage =
+      originalBytes > 0 ? (difference / originalBytes) * 100 : 0;
+
+    const reduction = Math.max(0, percentage);
+    const extension = getExtension(actualMimeType);
+    const safeName = getSafeFileName(originalFile.name);
+
+    downloadBtn.href = compressedImageUrl;
+
+    downloadBtn.download = `${safeName}-compressed.${extension}`;
+
+    originalSizeBadge.textContent = formatBytes(originalBytes);
+
+    compressedSizeBadge.textContent = formatBytes(compressedBytes);
+
+    resultOriginalSize.textContent = formatBytes(originalBytes);
+
+    resultCompressedSize.textContent = formatBytes(compressedBytes);
+
+    if (difference > 0) {
+      savedPercentage.textContent = `${reduction.toLocaleString("ar-EG", {
+        maximumFractionDigits: 1,
+      })}%`;
+
+      resultNote.textContent = `تم تقليل الحجم بمقدار ${formatBytes(difference)}.`;
+    } else if (difference < 0) {
+      savedPercentage.textContent = `+${Math.abs(percentage).toLocaleString(
+        "ar-EG",
+        {
+          maximumFractionDigits: 1,
+        },
+      )}%`;
+
+      resultNote.textContent =
+        "زاد حجم الملف الناتج. جرّب جودة أقل أو صيغة أخرى.";
+    } else {
+      savedPercentage.textContent = "0%";
+
+      resultNote.textContent =
+        "لم يتغير حجم الملف. جرّب صيغة أخرى أو جودة أقل.";
+    }
+
+    comparisonGrid.hidden = false;
+    compressionResult.hidden = false;
+
+    showMessage("تم ضغط الصورة بنجاح. يمكنك معاينتها وتنزيلها.");
+
+    canvas.width = 0;
+    canvas.height = 0;
+  } catch (error) {
+    clearCompressedResult();
+
+    showMessage(
+      error.message || "حدث خطأ أثناء ضغط الصورة. حاول مجددًا.",
+      "error",
     );
+  } finally {
+    setCompressionState(false);
+  }
+}
 
-    themeToggle.setAttribute("title", isDark ? "الوضع الفاتح" : "الوضع الداكن");
+compressBtn.addEventListener("click", compressImage);
+
+/* ---------- Reset settings ---------- */
+
+resetSettingsBtn.addEventListener("click", () => {
+  if (compressionInProgress) {
+    return;
   }
 
-  function loadTheme() {
-    try {
-      const savedTheme = localStorage.getItem(THEME_KEY);
+  outputFormat.value = "image/webp";
+  qualityRange.value = "80";
+  qualityValue.textContent = "80%";
 
-      if (savedTheme === "dark") {
-        document.body.classList.add("dark-mode");
-      } else {
-        document.body.classList.remove("dark-mode");
-      }
-    } catch (error) {
-      // يستمر الموقع في العمل إذا تعذر الوصول إلى التخزين.
-    }
+  clearCompressedResult();
 
-    updateThemeButton();
+  if (originalFile) {
+    showMessage("تمت إعادة الإعدادات. اضغط الصورة لتطبيقها.");
+  } else {
+    clearMessage();
+  }
+});
+
+/* ---------- Remove image ---------- */
+
+removeImageBtn.addEventListener("click", () => {
+  if (compressionInProgress) {
+    return;
   }
 
-  themeToggle.addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
+  resetWorkspace();
 
-    const isDark = document.body.classList.contains("dark-mode");
+  showMessage("تمت إزالة الصورة. اختر صورة جديدة للبدء.");
+});
 
-    try {
-      localStorage.setItem(THEME_KEY, isDark ? "dark" : "light");
-    } catch (error) {
-      // يظل تغيير المظهر فعالًا حتى عند تعذر حفظ الاختيار.
+/* ---------- Dark mode ---------- */
+
+function updateThemeButton() {
+  const darkMode = document.body.classList.contains("dark-mode");
+
+  themeToggle.textContent = darkMode ? "☀️" : "🌙";
+
+  themeToggle.setAttribute(
+    "aria-label",
+    darkMode ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن",
+  );
+
+  themeToggle.title = darkMode ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن";
+}
+
+function loadSavedTheme() {
+  try {
+    const savedTheme = localStorage.getItem("imagepro-theme");
+
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark-mode");
     }
-
-    updateThemeButton();
-  });
-
-  /* ---------- Mobile navigation ---------- */
-
-  function closeMobileMenu() {
-    mainNav.classList.remove("open");
-
-    mobileMenuButton.setAttribute("aria-expanded", "false");
-    mobileMenuButton.setAttribute("aria-label", "فتح القائمة");
+  } catch (error) {
+    // يظل الموقع قابلًا للاستخدام إذا تعذر الوصول للتخزين.
   }
 
-  mobileMenuButton.addEventListener("click", () => {
-    const isOpen = mainNav.classList.toggle("open");
+  updateThemeButton();
+}
 
-    mobileMenuButton.setAttribute("aria-expanded", String(isOpen));
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark-mode");
 
-    mobileMenuButton.setAttribute(
-      "aria-label",
-      isOpen ? "إغلاق القائمة" : "فتح القائمة",
-    );
-  });
+  const darkMode = document.body.classList.contains("dark-mode");
 
-  navLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      closeMobileMenu();
+  try {
+    localStorage.setItem("imagepro-theme", darkMode ? "dark" : "light");
+  } catch (error) {
+    // يعمل تغيير المظهر حتى عند تعذر حفظ الاختيار.
+  }
 
-      navLinks.forEach((item) => {
-        item.classList.toggle("active", item === link);
-      });
-    });
-  });
+  updateThemeButton();
+});
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      closeMobileMenu();
-    }
-  });
+/* ---------- Initial setup ---------- */
 
-  document.addEventListener("click", (event) => {
-    if (
-      mainNav.classList.contains("open") &&
-      !mainNav.contains(event.target) &&
-      !mobileMenuButton.contains(event.target)
-    ) {
-      closeMobileMenu();
-    }
-  });
-
-  window.addEventListener("resize", () => {
-    if (window.innerWidth > 760) {
-      closeMobileMenu();
-    }
-  });
-
-  /* ---------- Footer year ---------- */
+function initializeApp() {
+  qualityValue.textContent = `${qualityRange.value}%`;
 
   currentYear.textContent = new Date().getFullYear();
 
-  /* ---------- Initial state ---------- */
+  loadSavedTheme();
 
-  loadTheme();
-  filterTools();
+  workspace.hidden = true;
+  comparisonGrid.hidden = true;
+  compressionResult.hidden = true;
 
-  console.log("أدواتي: تم تشغيل الموقع بنجاح.");
+  console.log("ImagePro is ready.");
+}
+
+initializeApp();
+
+/* ---------- Cleanup ---------- */
+
+window.addEventListener("pagehide", () => {
+  revokeUrl(originalImageUrl);
+  revokeUrl(compressedImageUrl);
 });

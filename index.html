@@ -2,474 +2,319 @@
 <html lang="ar" dir="rtl">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="theme-color" content="#635bff">
-  <meta name="description"
-    content="أدواتي - مجموعة أدوات مجانية لمعالجة الصور وتحويل الملفات وإنجاز المهام اليومية بسهولة وأمان.">
-    <header class="site-header">
-      <div class="brand">
-        <img src="logo.png/logo (2).png" alt="شعار أدواتي" class="site-logo">
-        <h1>أدواتي</h1>
-      </div>
-    </header>
-  <meta name="keywords" content="أدوات مجانية, ضغط الصور, تحويل الصور إلى PDF, أدوات أونلاين">
+    <meta name="description" content="أداة مجانية لضغط الصور وتقليل حجمها مع التحكم في الجودة، مباشرة من المتصفح.">
+    <meta name="theme-color" content="#635bff">
 
-  <title>أدواتي | أدوات مجانية لإنجاز مهامك</title>
+    <title>ImagePro | ضاغط الصور الذكي</title>
 
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 
 <body>
-
-  <!-- Header -->
-  <header class="site-header">
-    <div class="container header-inner">
-
-      <a class="brand" href="#home" aria-label="العودة إلى الرئيسية">
-        <span class="brand-mark">أ</span>
-
-        <span class="brand-copy">
-          <strong>أدواتي<span class="brand-dot">.</span></strong>
-          <small>أدوات ذكية لحياة أسهل</small>
-        </span>
-      </a>
-
-      <button class="mobile-menu-button" id="mobileMenuButton" type="button" aria-label="فتح القائمة"
-        aria-expanded="false">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <nav class="main-nav" id="mainNav" aria-label="القائمة الرئيسية">
-        <a class="nav-link active" href="#home">الرئيسية</a>
-        <a class="nav-link" href="#tools">الأدوات</a>
-        <a class="nav-link" href="#about">عن الموقع</a>
-        <a class="nav-link" href="#contact">تواصل معنا</a>
-      </nav>
-
-      <button class="theme-toggle" id="themeToggle" type="button" aria-label="تفعيل الوضع الداكن" title="تغيير المظهر">
-        <span id="themeIcon">☾</span>
-      </button>
-
-    </div>
-  </header>
-
-  <main id="home">
-
-    <!-- Hero -->
-    <section class="hero-section">
-      <div class="container hero-layout">
-
-        <div class="hero-content">
-
-          <div class="eyebrow">
-            <span class="status-dot"></span>
-            أدوات رقمية في مكان واحد
-          </div>
-
-          <h1>
-            أنجز مهامك اليومية
-            <span class="gradient-text">بسهولة واحترافية.</span>
-          </h1>
-
-          <p class="hero-description">
-            اكتشف مجموعة من الأدوات المجانية لمعالجة الصور،
-            وتحويل الملفات، وتسهيل أعمالك اليومية، دون خطوات معقدة.
-          </p>
-
-          <div class="hero-actions">
-            <a class="button button-primary" href="#tools">
-              اكتشف الأدوات
-              <span aria-hidden="true">←</span>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" href="./" aria-label="ImagePro الصفحة الرئيسية">
+                <span class="brand-icon">◈</span>
+                <span>Image<span class="brand-highlight">Pro</span></span>
             </a>
 
-            <a class="button button-secondary" href="#about">
-              تعرف على الموقع
-            </a>
-          </div>
+            <nav class="header-nav" aria-label="التنقل الرئيسي">
+                <a href="#compressor">ضغط الصور</a>
+                <a href="#features">المميزات</a>
+                <a href="#how-it-works">كيف تعمل الأداة؟</a>
+            </nav>
 
-          <div class="hero-benefits">
-            <span><span class="check-icon">✓</span> استخدام سهل</span>
-            <span><span class="check-icon">✓</span> أدوات مجانية</span>
-            <span><span class="check-icon">✓</span> متوافق مع الهاتف</span>
-          </div>
-
-        </div>
-
-        <div class="hero-visual" aria-hidden="true">
-
-          <div class="visual-glow"></div>
-
-          <div class="visual-card visual-card-main">
-            <div class="visual-card-header">
-              <span class="window-dot dot-one"></span>
-              <span class="window-dot dot-two"></span>
-              <span class="window-dot dot-three"></span>
-              <span class="visual-card-title">مساحة العمل</span>
-            </div>
-
-            <div class="visual-preview">
-              <div class="preview-icon preview-purple">▦</div>
-              <div class="preview-lines">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-
-            <div class="visual-tools">
-              <div class="mini-tool">
-                <span class="mini-icon mini-blue">▧</span>
-                <span>ضغط الصور</span>
-                <span class="mini-check">✓</span>
-              </div>
-
-              <div class="mini-tool">
-                <span class="mini-icon mini-green">PDF</span>
-                <span>تحويل الملفات</span>
-                <span class="mini-check">✓</span>
-              </div>
-
-              <div class="mini-tool">
-                <span class="mini-icon mini-orange">✦</span>
-                <span>أدوات جديدة</span>
-                <span class="mini-check">+</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="floating-badge floating-top">
-            <span class="floating-icon">✦</span>
-            <span>بسيطة وسريعة</span>
-          </div>
-
-          <div class="floating-badge floating-bottom">
-            <span class="floating-icon green-icon">✓</span>
-            <span>تعمل من المتصفح</span>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Search -->
-    <section class="search-section" aria-label="البحث عن الأدوات">
-      <div class="container">
-
-        <div class="search-panel">
-          <div class="search-copy">
-            <h2>ما الأداة التي تحتاجها؟</h2>
-            <p>اكتب اسم الأداة للوصول إليها بسرعة.</p>
-          </div>
-
-          <form class="search-form" id="searchForm" role="search">
-            <span class="search-icon" aria-hidden="true">⌕</span>
-
-            <input type="search" id="toolSearch" placeholder="ابحث عن أداة..." aria-label="ابحث عن أداة"
-              autocomplete="off">
-
-            <button type="submit">بحث</button>
-          </form>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Tools -->
-    <section class="tools-section section-padding" id="tools">
-
-      <div class="container">
-
-        <div class="section-heading">
-          <div>
-            <span class="section-kicker">مكتبة الأدوات</span>
-            <h2>أدوات تساعدك على إنجاز الأعمال</h2>
-            <p>
-              اختر الأداة المناسبة وابدأ العمل مباشرة.
-            </p>
-          </div>
-
-          <span class="tools-counter" id="toolsCounter">
-         جميع الأدوات متاحة
-          </span>
-        </div>
-
-        <!-- Categories -->
-        <div class="category-tabs" id="categoryTabs" aria-label="تصنيفات الأدوات">
-
-          <button class="category-button active" type="button" data-category="all" aria-pressed="true">
-            جميع الأدوات
-          </button>
-
-          <button class="category-button" type="button" data-category="images" aria-pressed="false">
-            الصور
-          </button>
-
-          <button class="category-button" type="button" data-category="documents" aria-pressed="false">
-            الملفات والمستندات
-          </button>
-
-          <button class="category-button" type="button" data-category="coming" aria-pressed="false">
-            متاحه الأن
-          </button>
-
-        </div>
-
-        <!-- Ad placeholder -->
-        <div class="ad-slot" aria-label="مساحة إعلانية">
-          <span class="ad-label">إعلان</span>
-          <p>مساحة إعلانية اختيارية لدعم استمرار الموقع</p>
-        </div>
-
-        <!-- Tool cards -->
-        <div class="tools-grid" id="toolsGrid">
-
-          <!-- Image Compressor -->
-          <article class="tool-card" data-category="images"
-            data-search="ضغط الصور تصغير حجم الصور image compressor imagepro webp jpg png">
-            <div class="tool-card-top">
-              <div class="tool-icon icon-purple">▧</div>
-              <span class="tool-status status-ready">متاحة الآن</span>
-            </div>
-
-            <div class="tool-card-body">
-              <span class="tool-category-label">معالجة الصور</span>
-
-              <h3>ضغط الصور ImagePro</h3>
-
-              <p>
-                قلّل حجم صورك واختر الصيغة والجودة المناسبة،
-                ثم عاين النتيجة ونزّلها بسهولة.
-              </p>
-            </div>
-
-            <div class="tool-tags">
-              <span>JPG</span>
-              <span>PNG</span>
-              <span>WebP</span>
-            </div>
-
-            <a class="tool-action" href="image-compressor/index.html">
-              <span>استخدم الأداة</span>
-              <span aria-hidden="true">←</span>
-            </a>
-          </article>
-
-          <!-- Image to PDF -->
-          <article class="tool-card" data-category="documents"
-            data-search="تحويل الصور الى pdf image to pdf صور مستندات ملف pdf">
-            <div class="tool-card-top">
-              <div class="tool-icon icon-red">PDF</div>
-              <span class="tool-status status-new">أداة جديدة</span>
-            </div>
-
-            <div class="tool-card-body">
-              <span class="tool-category-label">الملفات والمستندات</span>
-
-              <h3>تحويل الصور إلى PDF</h3>
-
-              <p>
-                اجمع صورك في ملف PDF واحد، ورتّب صفحاتك،
-                ثم احفظ المستند على جهازك.
-              </p>
-            </div>
-
-            <div class="tool-tags">
-              <span>صور متعددة</span>
-              <span>ترتيب الصفحات</span>
-            </div>
-
-            <a class="tool-action" href="image-to-pdf/index.html">
-              <span>افتح الأداة</span>
-              <span aria-hidden="true">←</span>
-            </a>
-          </article>
-
-          <!-- Coming soon -->
-          <article class="tool-card coming-card" data-category="coming" data-search="دمج pdf دمج ملفات المستندات">
-            <div class="tool-card-top">
-              <div class="tool-icon icon-blue">⇲</div>
-              <span class="tool-status status-soon">متاحة الآن</span>
-            </div>
-
-            <div class="tool-card-body">
-              <span class="tool-category-label">الملفات والمستندات</span>
-              <h3>دمج ملفات PDF</h3>
-              <p>
-                أداة مستقبلية لجمع عدة مستندات PDF
-                في ملف واحد مرتب.
-              </p>
-              <a href="pdf-merger/index.html">دمج الملفات</a>
-            </div>
-
-            <div class="tool-tags">
-              <span>PDF</span>
-              <span>تنظيم الملفات</span>
-            </div>
-
-            <button class="tool-action disabled-action" type="button" disabled>
-              <a class="tool-action" href="pdf-merger/index.html">
-                <span>افتح الأداة</span>
-              <span aria-hidden="true">←</span>
-
-              </a>
-
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="تغيير المظهر" title="تغيير المظهر">
+                🌙
             </button>
-          </article>
-
-          <article class="tool-card coming-card" data-category="coming"
-            data-search="تغيير حجم الصور قص الصور تعديل الأبعاد">
-            <div class="tool-card-top">
-              <div class="tool-icon icon-green">↗</div>
-              <span class="tool-status status-soon">متاحة الآن</span>
-            </div>
-
-            <div class="tool-card-body">
-              <span class="tool-category-label">معالجة الصور</span>
-              <h3>تغيير أبعاد الصور</h3>
-              <p>
-                أداة مستقبلية لتعديل أبعاد الصور
-                لتناسب المواقع والتصاميم المختلفة.
-              </p>
-            </div>
-
-            <div class="tool-tags">
-              <span>تغيير الأبعاد</span>
-              <span>صور</span>
-            </div>
-
-            <button class="tool-action disabled-action" type="button" disabled>
-              
-              <a class="tool-action" href="image-compressor/index.html">
-                <span>استخدم الأداة</span>
-              <span aria-hidden="true">←</span>
-              </a>
-            </button>
-          </article>
-
         </div>
+    </header>
 
-        <div class="empty-state" id="emptyState" hidden>
-          <div class="empty-icon">⌕</div>
-          <h3>لم نعثر على أدوات مطابقة</h3>
-          <p>جرّب اسمًا آخر أو اختر تصنيفًا مختلفًا.</p>
+    <main>
+        <section class="hero">
+            <div class="container hero-content">
+                <span class="hero-badge">
+                    <span class="status-dot"></span>
+                    أداة مجانية لضغط الصور
+                </span>
 
-          <button class="button button-secondary" id="clearSearch" type="button">
-            عرض جميع الأدوات
-          </button>
-        </div>
+                <h1>
+                    صور أصغر.
+                    <span class="gradient-text">جودة أفضل.</span>
+                </h1>
 
-      </div>
-    </section>
+                <p class="hero-description">
+                    قلّل حجم صورك بسهولة، وتحكم في مستوى الجودة،
+                    ثم نزّل الصور المضغوطة مباشرة إلى جهازك.
+                </p>
 
-    <!-- About -->
-    <section class="about-section section-padding" id="about">
-      <div class="container">
+                <div class="hero-benefits">
+                    <span>✓ بدون إنشاء حساب</span>
+                    <span>✓ تحكم في الجودة</span>
+                    <span>✓ معاينة قبل التنزيل</span>
+                </div>
+            </div>
+        </section>
 
-        <div class="about-panel">
+        <section class="compressor-section" id="compressor">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">مساحة العمل</span>
+                    <h2>ضغط الصور الذكي</h2>
+                    <p>اختر صورة من جهازك وابدأ تحسين حجمها.</p>
+                </div>
 
-          <div class="about-content">
-            <span class="section-kicker">عن أدواتي</span>
+                <div class="compressor-card">
+                    <div class="upload-zone" id="uploadZone" tabindex="0" role="button" aria-label="اختر صورة لضغطها">
+                        <input id="imageInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
 
-            <h2>
-              أدوات مفيدة،
-              <span class="gradient-text">بخطوات أقل.</span>
-            </h2>
+                        <div class="upload-icon">↑</div>
 
-            <p>
-              نعمل على بناء مجموعة من الأدوات الرقمية البسيطة
-              التي تساعدك على إنجاز مهامك اليومية من مكان واحد،
-              مع التركيز على سهولة الاستخدام والخصوصية.
-            </p>
+                        <h3>أفلت صورتك هنا</h3>
+                        <p>أو اختر صورة من جهازك للبدء</p>
 
-            <a class="button button-primary" href="#tools">
-              تصفح الأدوات
-              <span aria-hidden="true">←</span>
+                        <button class="primary-btn" id="selectImageBtn" type="button">
+                            <span>＋</span>
+                            اختر صورة
+                        </button>
+
+                        <div class="upload-formats">
+                            الصيغ المدعومة: JPG، PNG، WebP
+                        </div>
+                    </div>
+
+                    <div class="workspace" id="workspace" hidden>
+                        <div class="workspace-header">
+                            <div>
+                                <h3>إعدادات الضغط</h3>
+                                <p>خصص الصورة حسب احتياجاتك.</p>
+                            </div>
+
+                            <button class="text-btn" id="removeImageBtn" type="button">
+                                إزالة الصورة ×
+                            </button>
+                        </div>
+
+                        <div class="file-summary">
+                            <div class="file-icon">▧</div>
+                            <div class="file-details">
+                                <strong id="fileName">image.jpg</strong>
+                                <span id="originalSize">الحجم الأصلي: —</span>
+                                <span id="imageDimensions">الأبعاد: —</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-grid">
+                            <div class="field-group">
+                                <label for="outputFormat">صيغة الصورة الناتجة</label>
+                                <select id="outputFormat">
+                                    <option value="image/webp">WebP — حجم صغير</option>
+                                    <option value="image/jpeg">JPEG — توافق واسع</option>
+                                    <option value="image/png">PNG — عند الحاجة للشفافية</option>
+                                </select>
+                                <span class="field-hint">
+                                    قد لا تحتفظ JPEG بالخلفية الشفافة.
+                                </span>
+                            </div>
+
+                            <div class="field-group">
+                                <div class="label-row">
+                                    <label for="qualityRange">جودة الصورة</label>
+                                    <strong id="qualityValue">80%</strong>
+                                </div>
+
+                                <input id="qualityRange" type="range" min="10" max="100" value="80" step="5">
+
+                                <div class="range-labels">
+                                    <span>حجم أصغر</span>
+                                    <span>جودة أعلى</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-row">
+                            <button class="primary-btn" id="compressBtn" type="button">
+                                ضغط الصورة الآن
+                                <span>→</span>
+                            </button>
+
+                            <button class="secondary-btn" id="resetSettingsBtn" type="button">
+                                إعادة الإعدادات
+                            </button>
+                        </div>
+
+                        <p class="status-message" id="statusMessage" role="status" aria-live="polite"></p>
+
+                        <div class="comparison-grid" id="comparisonGrid" hidden>
+                            <article class="preview-card">
+                                <div class="preview-heading">
+                                    <h4>الصورة الأصلية</h4>
+                                    <span class="size-badge" id="originalSizeBadge">—</span>
+                                </div>
+
+                                <div class="image-preview">
+                                    <img id="originalPreview" alt="معاينة الصورة الأصلية">
+                                </div>
+                            </article>
+
+                            <article class="preview-card">
+                                <div class="preview-heading">
+                                    <h4>الصورة المضغوطة</h4>
+                                    <span class="size-badge success-badge" id="compressedSizeBadge">—</span>
+                                </div>
+
+                                <div class="image-preview">
+                                    <img id="compressedPreview" alt="معاينة الصورة بعد الضغط">
+                                </div>
+                            </article>
+                        </div>
+
+                        <div class="compression-result" id="compressionResult" hidden>
+                            <div class="result-stat">
+                                <span>الحجم الأصلي</span>
+                                <strong id="resultOriginalSize">—</strong>
+                            </div>
+
+                            <div class="result-stat">
+                                <span>الحجم الجديد</span>
+                                <strong id="resultCompressedSize">—</strong>
+                            </div>
+
+                            <div class="result-stat highlight-stat">
+                                <span>نسبة التغيير</span>
+                                <strong id="savedPercentage">—</strong>
+                            </div>
+
+                            <a class="primary-btn download-btn" id="downloadBtn" href="#"
+                                download="compressed-image.webp">
+                                تنزيل الصورة
+                                <span>↓</span>
+                            </a>
+
+                            <p class="result-note" id="resultNote"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="privacy-note">
+                    <span>🔒</span>
+                    تتم معالجة الصور داخل متصفحك دون الحاجة إلى رفعها إلى خادم.
+                </p>
+            </div>
+        </section>
+
+        <section class="features-section" id="features">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">لماذا ImagePro؟</span>
+                    <h2>كل ما تحتاجه لضغط صورك</h2>
+                    <p>أدوات بسيطة بتجربة استخدام واضحة ومريحة.</p>
+                </div>
+
+                <div class="features-grid">
+                    <article class="feature-card">
+                        <div class="feature-icon purple-icon">↘</div>
+                        <h3>تقليل حجم الصور</h3>
+                        <p>قلل مساحة الصور لتسهيل مشاركتها ورفعها على الإنترنت.</p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon blue-icon">◉</div>
+                        <h3>تحكم في الجودة</h3>
+                        <p>اختر مستوى الجودة الذي يناسب استخدامك للصورة.</p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon green-icon">▣</div>
+                        <h3>معاينة مباشرة</h3>
+                        <p>قارن الصورة الأصلية بالنسخة الناتجة قبل تنزيلها.</p>
+                    </article>
+
+                    <article class="feature-card">
+                        <div class="feature-icon orange-icon">⌂</div>
+                        <h3>خصوصية أفضل</h3>
+                        <p>تتم معالجة الصور محليًا داخل المتصفح دون رفعها إلى خادم.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="steps-section" id="how-it-works">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="eyebrow">خطوات بسيطة</span>
+                    <h2>كيف تضغط صورتك؟</h2>
+                </div>
+
+                <div class="steps-grid">
+                    <article class="step-card">
+                        <span class="step-number">01</span>
+                        <h3>اختر الصورة</h3>
+                        <p>حدد صورة من هاتفك أو جهاز الكمبيوتر.</p>
+                    </article>
+
+                    <article class="step-card">
+                        <span class="step-number">02</span>
+                        <h3>اضبط الجودة</h3>
+                        <p>اختر صيغة الصورة وحدد مستوى الجودة المناسب.</p>
+                    </article>
+
+                    <article class="step-card">
+                        <span class="step-number">03</span>
+                        <h3>اضغط ونزّل</h3>
+                        <p>عاين النتيجة ثم احفظ الصورة على جهازك.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq-section">
+            <div class="container faq-container">
+                <div class="section-heading">
+                    <span class="eyebrow">أسئلة شائعة</span>
+                    <h2>هل لديك سؤال؟</h2>
+                </div>
+
+                <details class="faq-item">
+                    <summary>هل استخدام الأداة مجاني؟</summary>
+                    <p>نعم، الأداة مصممة للاستخدام المجاني دون إنشاء حساب.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>هل يتم رفع صوري إلى الإنترنت؟</summary>
+                    <p>تُعالج الصور داخل المتصفح باستخدام Canvas، ولا يتضمن هذا التطبيق رفعها إلى خادم.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>هل تعمل الأداة على الهاتف؟</summary>
+                    <p>نعم، التصميم متجاوب مع الهواتف والأجهزة اللوحية وأجهزة الكمبيوتر الحديثة.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>هل يقل حجم كل صورة بعد الضغط؟</summary>
+                    <p>ليس بالضرورة؛ فقد تكون بعض الصور مضغوطة مسبقًا. قارن حجم الملف الأصلي بالناتج قبل التنزيل.</p>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <a class="brand footer-brand" href="./">
+                <span class="brand-icon">◈</span>
+                <span>Image<span class="brand-highlight">Pro</span></span>
             </a>
-          </div>
 
-          <div class="about-features">
-
-            <div class="feature-item">
-              <span class="feature-icon">⚡</span>
-              <div>
-                <h3>تجربة سهلة</h3>
-                <p>واجهات واضحة وخطوات بسيطة.</p>
-              </div>
-            </div>
-
-            <div class="feature-item">
-              <span class="feature-icon">🔒</span>
-              <div>
-                <h3>الخصوصية</h3>
-                <p>تتم معالجة الصور داخل المتصفح في الأدوات المصممة لذلك.</p>
-              </div>
-            </div>
-
-            <div class="feature-item">
-              <span class="feature-icon">📱</span>
-              <div>
-                <h3>متوافق مع الأجهزة</h3>
-                <p>استخدم الموقع من الهاتف أو الكمبيوتر.</p>
-              </div>
-            </div>
-
-          </div>
-
+            <p>أداة بسيطة لمساعدتك على تحسين صورك.</p>
+            <p class="copyright">
+                © <span id="currentYear"></span> ImagePro. جميع الحقوق محفوظة.
+            </p>
         </div>
-
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section class="contact-section section-padding" id="contact">
-      <div class="container contact-inner">
-
-        <div>
-          <span class="section-kicker">تواصل معنا</span>
-          <h2>هل لديك اقتراح لأداة جديدة؟</h2>
-          <p>
-            شاركنا فكرتك للمساعدة في تطوير مجموعة أدوات أكثر فائدة.
-          </p>
-        </div>
-
-        <a class="button button-primary" href="mailto:contact@example.com?subject=اقتراح%20أداة%20جديدة">
-          اقترح أداة
-          <span aria-hidden="true">←</span>
-        </a>
-
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-
-      <a class="brand footer-brand" href="#home">
-        <span class="brand-mark">أ</span>
-        <span class="brand-copy">
-          <strong>أدواتي<span class="brand-dot">.</span></strong>
-          <small>أدوات ذكية لحياة أسهل</small>
-        </span>
-      </a>
-
-      <p>
-        © <span id="currentYear"></span> أدواتي.
-        جميع الحقوق محفوظة.
-      </p>
-
-      <a class="back-to-top" href="#home">العودة للأعلى ↑</a>
-
-    </div>
-  </footer>
-
+    </footer>
 </body>
 
 </html>
